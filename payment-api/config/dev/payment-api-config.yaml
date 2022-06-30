@@ -1,0 +1,16 @@
+storage:
+  persistentVolume:
+    storageClass: io1-50-iops-per-gb
+    size: 10Gi
+conf:
+  join:
+    - cockroachdb-0.cockroachdb.cockroachdb.svc.argon-eks-general-blue-01
+    - cockroachdb-1.cockroachdb.cockroachdb.svc.argon-eks-general-blue-01
+    - cockroachdb-2.cockroachdb.cockroachdb.svc.argon-eks-general-blue-01
+    - cockroachdb-0.cockroachdb.cockroachdb.svc.argon-gke-general-blue-01
+    - cockroachdb-1.cockroachdb.cockroachdb.svc.argon-gke-general-blue-01
+    - cockroachdb-2.cockroachdb.cockroachdb.svc.argon-gke-general-blue-01
+    - cockroachdb-0.cockroachdb.cockroachdb.svc.argon-aks-general-blue-01
+    - cockroachdb-1.cockroachdb.cockroachdb.svc.argon-aks-general-blue-01
+    - cockroachdb-2.cockroachdb.cockroachdb.svc.argon-aks-general-blue-01
+  locality: cloud=aws

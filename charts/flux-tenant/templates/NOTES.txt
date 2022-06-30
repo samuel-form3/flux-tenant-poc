@@ -1,0 +1,5 @@
+## Repo
+{{ .Values.repository }}
+
+## Path into the repo
+{{ .Values.path }}

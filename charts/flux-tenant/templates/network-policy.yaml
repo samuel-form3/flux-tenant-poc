@@ -1,0 +1,99 @@
+{{- $namespace := .Values.tenantName -}}
+---
+{{- if .Values.networkPolicies.enabled }}
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: tenant-network-policy
+  namespace: {{ $namespace }}
+spec:
+  # Select all endpoints in the policy namespace
+  endpointSelector: {}
+  ingress:
+    # Allow ingress from all pods in the policy namespace
+    - fromEndpoints:
+        - {}
+  {{- with .Values.networkPolicies.ingress }}
+  {{- if .ip }}
+    - fromCIDR:
+  {{- range $value := .ip }}
+      - {{ . }}/32
+  {{- end }}
+  {{- end }}
+  {{- range $value := .tenant }}
+    # Allow ingress from {{ $value.name }} tenant
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: {{ $value.name }}
+            {{- if $value.cluster }}
+            io.cilium.k8s.policy.cluster: {{ $value.cluster }}
+            {{- end }}
+  {{- end }}
+  {{- end }}
+  egress:
+    # Allows egress to all pods in the policy namespace
+    - toEndpoints:
+        - {}
+    # Allows egress to k8s DNS on port 53
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: kube-system
+            k8s-app: kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+            - port: "53"
+              protocol: TCP
+          rules:
+            dns:
+              - matchPattern: "*"
+    # Allows egress to cloud metadata server
+    - toCIDR:
+      - 169.254.169.254/32
+      toPorts:
+        - ports:
+          - port: "80"
+  {{- with .Values.networkPolicies.egress }}
+  {{- range $value := .fqdn }}
+    # Allow egress to tenant allowed FQDNs
+    - toFQDNs:
+      {{- range $n := $value.names }}
+      - matchName: {{ $n | quote }}
+      {{- end }}
+      {{- range $p := $value.patterns }}
+      - matchPattern: {{ $p | quote }}
+      {{- end }}
+      {{- include "toPorts" $value | nindent 6 }}
+  {{- end }}
+  {{- range $value := .cidrs}}
+    # Allow egress to tenant allowed CIDRs
+    - toCIDR:
+      {{- range $c := $value.cidrs }}
+      - {{ $c }}
+      {{- end }}
+      {{- include "toPorts" $value | nindent 6 }}
+  {{- end }}
+  {{- range $value := .tenant }}
+    # Allow egress to {{ $value.name }} tenant and optionally the specific cluster (when meshed)
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: {{ $value.name }}
+            {{- if $value.cluster }}
+            io.cilium.k8s.policy.cluster: {{ $value.cluster }}
+            {{- end }}
+  {{- end }}
+  {{- range $value := .labels }}
+    - toEndpoints:
+        - matchLabels:
+            {{- toYaml $value.labels | nindent 12 }}
+      {{- include "toPorts" $value | nindent 6 }}
+  {{- end }}
+  {{- if .entities }}
+    - toEntities:
+  {{- range $value := .entities }}
+        - {{ . }}
+  {{- end }}
+  {{- end }}
+  {{- end }}
+{{- end }}

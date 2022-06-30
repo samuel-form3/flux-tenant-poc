@@ -1,0 +1,28 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: tenant-payment-api
+  namespace: flux
+spec:
+  targetNamespace: payment-api
+  releaseName: tenant-payment-api
+  chart:
+    spec:
+      chart: ./charts/flux-tenant
+      sourceRef:
+        kind: GitRepository
+        name: flux-sync
+        namespace: flux
+  interval: 1m0s
+  values:
+    repository:
+      url: https://github.com/samuel-form3/flux-tenant-poc
+    bootstrap:
+      folderPathPrefix: payment-api
+    tenantName: payment-api
+  valuesFrom:
+    - kind: ConfigMap
+      name: cluster-config
+      valuesKey: environment
+      targetPath: environment
+      optional: false

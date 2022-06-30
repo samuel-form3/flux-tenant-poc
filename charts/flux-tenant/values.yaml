@@ -1,0 +1,62 @@
+# Prune true = delete k8s resources when resources are deleted in the repository, false means leave the resources to be cleaned by user
+prune: true
+
+# Certain tenants might need elevated access privileges (e.g. platform)
+additionalRoleBindings: []
+
+# Certain tenants might need elevated cluster access privileges (e.g. platform)
+additionalClusterRoleBindings: []
+
+additionalServiceAccounts: []
+# - name: my-service-account
+#   clusterRoleBindings:
+#   - foobar
+#   - bazbang
+
+# The branch from which to run reconciliation
+repository:
+  url: https://github.com/samuel-form3/flux-tenant-poc
+  branch: main
+bootstrap:
+  folderPathPrefix: flux
+
+# The default tenant network policies
+networkPolicies:
+  enabled: false
+  ingress: {}
+  egress: {}
+#networkPolicies:
+#  enabled: true
+#  ingress:
+#    ip:
+#      - 10.0.0.42
+#      - 10.0.0.99
+#    tenant:
+#      - name: observability
+#      - name: nats
+#  egress:
+#    tenant:
+#      - name: observability
+#      - name: nats
+#    fqdn:
+#      - names:
+#          - "sts.amazonaws.com"
+#        patterns:
+#          - "sqs.*.amazonaws.com"
+#        ports:
+#          - "443"
+#    cidrs:
+#      - cidrs:
+#          - 169.254.169.254/32
+#        ports:
+#          - "80"
+#    labels:
+#      - labels:
+#          k8s:app.kubernetes.io/instance: haproxy-linkerd
+#          k8s:app.kubernetes.io/name: haproxy-egress
+#          k8s:io.kubernetes.pod.namespace: platform
+#        ports:
+#          - "4144"
+#    entities:
+#      - kube-apiserver
+
