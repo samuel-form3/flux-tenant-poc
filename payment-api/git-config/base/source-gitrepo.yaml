@@ -1,0 +1,10 @@
+apiVersion: source.toolkit.fluxcd.io/v1beta1
+kind: GitRepository
+metadata:
+  name: source
+  namespace: payment-api
+spec:
+  interval: 3m0s
+  ref:
+    branch: main
+  url: https://github.com/samuel-form3/flux-tenant-poc

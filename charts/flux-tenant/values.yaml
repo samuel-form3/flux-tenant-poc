@@ -17,8 +17,12 @@ additionalServiceAccounts: []
 repository:
   url: https://github.com/samuel-form3/flux-tenant-poc
   branch: main
+<<<<<<< HEAD
 bootstrap:
   folderPathPrefix: flux
+=======
+kustomizationPath: /tenant-x/bootstrap
+>>>>>>> c45b0a9 (Initial)
 
 # The default tenant network policies
 networkPolicies:
