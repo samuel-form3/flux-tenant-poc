@@ -1,0 +1,13 @@
+{{- $namespace := .Values.tenantName -}}
+{{- $tenantName := .Values.tenantName -}}
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta1
+kind: GitRepository
+metadata:
+  name: main
+  namespace: {{ $namespace }}
+spec:
+  interval: 3m0s
+  ref:
+    branch: {{ .Values.repository.branch }}
+  url: {{ .Values.repository.url }}

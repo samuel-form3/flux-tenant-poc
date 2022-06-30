@@ -1,0 +1,169 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: tenant
+rules:
+  - apiGroups:
+      - cert-manager.io
+    resources:
+      - certificates
+      - certificaterequests
+      - issuers
+    verbs:
+      - delete
+      - deletecollection
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+    verbs:
+      - delete
+      - deletecollection
+  - apiGroups:
+      - ""
+    resources:
+      - configmaps
+      - pods/attach
+      - pods/exec
+      - pods/portforward
+      - pods/proxy
+    verbs:
+      - create
+      - update
+      - patch
+      - watch
+      - get
+      - list
+      - delete
+      - deletecollection
+  - apiGroups:
+      - ""
+    resources:
+      - endpoints
+      - persistentvolumeclaims
+      - replicationcontrollers
+      - replicationcontrollers/scale
+      - secrets
+      - serviceaccounts
+      - services
+      - services/proxy
+    verbs:
+      - delete
+      - deletecollection
+  - apiGroups:
+      - apps
+    resources:
+      - daemonsets
+      - deployments
+      - deployments/rollback
+      - deployments/scale
+      - replicasets
+      - replicasets/scale
+      - statefulsets
+      - statefulsets/scale
+    verbs:
+      - delete
+      - deletecollection
+  - apiGroups:
+      - apps
+    resources:
+      - deployments/scale
+      - replicasets/scale
+      - statefulsets/scale
+    verbs:
+      - create
+      - update
+      - patch
+      - watch
+      - get
+      - list
+      - delete
+      - deletecollection
+  - apiGroups:
+      - autoscaling
+    resources:
+      - horizontalpodautoscalers
+    verbs:
+      - update
+      - patch
+      - watch
+      - get
+      - delete
+      - deletecollection
+  - apiGroups:
+      - batch
+    resources:
+      - cronjobs
+      - jobs
+    verbs:
+      - delete
+      - deletecollection
+  - apiGroups:
+      - extensions
+    resources:
+      - daemonsets
+      - deployments
+      - deployments/rollback
+      - deployments/scale
+      - ingresses
+      - networkpolicies
+      - replicasets
+      - replicasets/scale
+      - replicationcontrollers/scale
+    verbs:
+      - delete
+      - deletecollection
+  - apiGroups:
+      - policy
+    resources:
+      - poddisruptionbudgets
+    verbs:
+      - delete
+      - deletecollection
+  - apiGroups:
+      - networking.k8s.io
+    resources:
+      - ingresses
+      - networkpolicies
+    verbs:
+      - delete
+      - deletecollection
+  - apiGroups:
+      - helm.toolkit.fluxcd.io
+      - source.toolkit.fluxcd.io
+    resources:
+      - helmreleases
+      - helmrepositories
+    verbs:
+      - create
+      - update
+      - patch
+      - get
+      - list
+      - delete
+      - deletecollection
+  - apiGroups:
+      - kustomize.toolkit.fluxcd.io
+    resources:
+      - kustomizations
+    verbs:
+      - create
+      - update
+      - patch
+      - get
+      - list
+      - delete
+      - deletecollection
+  - apiGroups:
+      - source.toolkit.fluxcd.io
+    resources:
+      - gitrepositories
+    verbs:
+      - create
+      - update
+      - patch
+      - get
+      - list
+      - delete
+      - deletecollection

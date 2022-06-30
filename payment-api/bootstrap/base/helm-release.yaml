@@ -1,0 +1,36 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: tenant-bootstrap
+  namespace: payment-api
+spec:
+  targetNamespace: payment-api
+  releaseName: tenant-bootstrap
+  chart:
+    spec:
+      # TODO: Change this for OCI Chart
+      chart: ./charts/tenant-bootstrap
+      sourceRef:
+        kind: GitRepository
+        name: main
+        namespace: payment-api
+  interval: 1m0s
+  values:
+    repository:
+      url: https://github.com/samuel-form3/flux-tenant-poc
+    tenantName: payment-api
+    config:
+      folderPathPrefix: payment-api
+    promoted:
+      folderPathPrefix: payment-api
+  valuesFrom:
+    - kind: ConfigMap
+      name: bootstrap-config
+      valuesKey: branch
+      targetPath: repository.branch
+      optional: true
+    - kind: ConfigMap
+      name: cluster-config
+      valuesKey: environment
+      targetPath: environment
+      optional: false

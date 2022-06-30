@@ -1,0 +1,98 @@
+{{- $namespace := .Values.tenantName -}}
+{{- $tenantName := include "flux-tenant.name" . -}}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  labels:
+    toolkit.fluxcd.io/tenant: {{ $tenantName }}
+  annotations:
+    helm.sh/resource-policy: keep
+  name: tenant
+  namespace: {{ $namespace }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: tenant
+subjects:
+  - kind: ServiceAccount
+    name: {{ $tenantName }}
+    namespace: {{ $namespace }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  labels:
+    toolkit.fluxcd.io/tenant: {{ $tenantName }}
+  annotations:
+    helm.sh/resource-policy: keep
+  name: tenant-view
+  namespace: {{ $namespace }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: view
+subjects:
+  - kind: ServiceAccount
+    name: {{ $tenantName }}
+    namespace: {{ $namespace }}
+# The following is a temporary measure to allow tenants to work in their namespace till
+# we set up a better system for access control
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  labels:
+    toolkit.fluxcd.io/tenant: {{ $tenantName }}
+  annotations:
+    helm.sh/resource-policy: keep
+  name: tenant-admin
+  namespace: {{ $namespace }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: admin
+subjects:
+  - kind: ServiceAccount
+    name: {{ $tenantName }}
+    namespace: {{ $namespace }}
+{{- range .Values.additionalRoleBindings }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  labels:
+    toolkit.fluxcd.io/tenant: {{ $tenantName }}
+  annotations:
+    helm.sh/resource-policy: keep
+  name: tenant-{{ . }}
+  namespace: {{ $namespace }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ . }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ $tenantName }}
+    namespace: {{ $namespace }}
+{{- end }}
+{{- range .Values.additionalClusterRoleBindings }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    toolkit.fluxcd.io/tenant: {{ $tenantName }}
+  annotations:
+    helm.sh/resource-policy: keep
+# We need to prefix the name with namespace because ClusterRoleBinding resources are not namespaced
+  name: tenant-{{ $namespace }}-{{ . }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ . }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ $tenantName }}
+    namespace: {{ $namespace }}
+{{- end }}

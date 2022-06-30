@@ -1,0 +1,12 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
+kind: Kustomization
+metadata:
+  name: tenant-config
+spec:
+  prune: {{ .Values.config.prune }}
+  serviceAccountName: flux-{{ .Values.tenantName }}
+  interval: {{ .Values.config.reconciliationInterval }}
+  path: /{{ .Values.config.folderPathPrefix }}/config/{{ .Values.environment }}
+  sourceRef:
+    kind: GitRepository
+    name: source

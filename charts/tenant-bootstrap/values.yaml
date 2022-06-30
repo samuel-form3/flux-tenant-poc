@@ -1,0 +1,19 @@
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+repository:
+  branch: main
+  url: ""
+  reconciliationInterval: 3m0s
+config:
+  prune: true
+  folderPathPrefix: "flux"
+  reconciliationInterval: 5m0s
+promoted:
+  reconciliationInterval: 5m0s
+  prune: true
+  folderOverride : ""
+  folderPathPrefix: "flux"
+environment: dev
+tenantName: ""

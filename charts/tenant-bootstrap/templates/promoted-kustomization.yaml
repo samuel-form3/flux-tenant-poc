@@ -1,0 +1,16 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
+kind: Kustomization
+metadata:
+  name: tenant-promoted
+spec:
+  prune: {{ .Values.promoted.prune }}
+  serviceAccountName: flux-{{ .Values.tenantName }}
+  interval: {{ .Values.promoted.reconciliationInterval }}
+  {{- if .Values.promoted.folderOverride }}
+  path: {{ .Values.promoted.folderOverride }}
+  {{- else }}
+  path: /{{ .Values.promoted.folderPathPrefix }}/promoted/{{ .Values.environment }}
+  {{- end }}
+  sourceRef:
+    kind: GitRepository
+    name: source

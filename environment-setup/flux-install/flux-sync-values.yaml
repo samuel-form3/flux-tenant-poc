@@ -1,0 +1,10 @@
+gitRepository:
+  spec:
+    interval: 1m
+    url: https://github.com/samuel-form3/flux-tenant-poc.git
+    ref:
+      branch: main
+kustomization:
+  spec:
+    path: /admin
+    targetNamespace: flux
